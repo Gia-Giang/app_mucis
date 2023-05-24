@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../core/constants/color_containts.dart';
@@ -17,13 +18,26 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
   List<String> options = ['All', 'Album', 'Playlist', 'Artist', 'Explpore'];
   final TextEditingController _textEditingController = TextEditingController();
+  // ignore: unused_field
+  late Timer _timer;
+  double _progress = 0.0;
+  // ignore: prefer_final_fields, unused_field
+  Duration _elapsedTime = Duration.zero;
 
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
 
   void handelSubmit() {}
+
+  void _onSliderChanged(double value) {
+    setState(() {
+      _progress = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -32,7 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
         Container(
           height: 35,
           margin: const EdgeInsets.only(
-              left: kBiggerPadding, right: kBiggerPadding),
+              top: kDefaultPadding,
+              left: kBiggerPadding,
+              right: kBiggerPadding),
           child: Row(
             children: [
               Expanded(
@@ -101,9 +117,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               const BorderRadius.all(Radius.circular(10))),
                       child: Padding(
                           padding: const EdgeInsets.all(10),
-                          child: Text(options[index],style: TextStyle(color: index == selectedIndex
-                              ? Colors.white
-                              : Colors.black,),)),
+                          child: Text(
+                            options[index],
+                            style: TextStyle(
+                              color: index == selectedIndex
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          )),
                     ),
                   );
                 })),
@@ -117,16 +138,66 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           children: [
             Container(
-              color: Colors.red,
-              child: const Center(
-                child: Text('Page 1'),
+              margin: const EdgeInsets.only(left: 40, right: 40),
+              color: Colors.white,
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Image.asset("assets/images/ic_arrow_left.png"),
+                  )),
+                  Container(
+                    decoration: const BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromRGBO(133, 0, 32, 0.14),
+                            offset: Offset(2, 4),
+                            blurRadius: 23,
+                          )
+                        ],
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.white),
+                    width: 80,
+                    height: 80,
+                    child: Image.asset("assets/images/ic_pause.png"),
+                  ),
+                  Expanded(
+                      child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Image.asset("assets/images/ic_right.png"),
+                  ))
+                ],
               ),
             ),
-            Container(
-              color: Colors.green,
-              child: const Center(
-                child: Text('Page 2'),
-              ),
+            Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: kBiggerPadding,right: kBiggerPadding),
+                  child: Row(
+                  children: [
+                    Expanded(
+                        child: Align(
+                      // ignore: sort_child_properties_last
+                      child: Text(_progress.toString()),
+                      alignment: Alignment.centerLeft,
+                    )),
+                    Expanded(
+                        child: Align(
+                      child: Text((100-_progress).toString()),
+                      alignment: Alignment.centerRight,
+                    ))
+                  ],
+                ),),
+                Slider(
+                  activeColor: ColorPalette.redColor,
+                  inactiveColor: ColorPalette.lightGray,
+                  value: _progress,
+                  min: 0.0,
+                  max: 100.0,
+                  onChanged: _onSliderChanged,
+                )
+              ],
             ),
             Container(
               color: Colors.blue,
