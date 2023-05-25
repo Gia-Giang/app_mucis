@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+const double kmega = 40;
 const double kBiggerPadding = 27.0;
 const double kLargePadding = 27.0; // large default padding
 const double kMediumPadding = 24.0; // bigger default padding

@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: routes,
-      initialRoute: '/onboarding_screen',
+      initialRoute: '/music_player_screen',
       home: Scaffold(
         bottomNavigationBar: SalomonBottomBar(
           currentIndex: _currentIndex,
@@ -38,28 +38,28 @@ class _MyAppState extends State<MyApp> {
           unselectedItemColor: ColorPalette.redColor.withOpacity(0.2),
           items: [
             SalomonBottomBarItem(
-              icon: Icon(
+              icon: const Icon(
                 FontAwesomeIcons.house,
                 size: kDefaultPadding,
               ),
               title: Text("Home"),
             ),
             SalomonBottomBarItem(
-              icon: Icon(
+              icon: const Icon(
                 FontAwesomeIcons.solidHeart,
                 size: kDefaultPadding,
               ),
               title: Text("Likes"),
             ),
             SalomonBottomBarItem(
-              icon: Icon(
+              icon: const Icon(
                 FontAwesomeIcons.briefcase,
                 size: kDefaultPadding,
               ),
-              title: Text("Booking"),
+              title: const Text("Booking"),
             ),
             SalomonBottomBarItem(
-              icon: Icon(
+              icon: const Icon(
                 FontAwesomeIcons.solidUser,
                 size: kDefaultPadding,
               ),
@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
         body: IndexedStack(
           index: _currentIndex,
           children: [
-            HomeScreen(),
+            const HomeScreen(),
             Container(),
             Container(),
             Container(),

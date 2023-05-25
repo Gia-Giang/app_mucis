@@ -5,6 +5,7 @@ class ColorPalette {
   static const Color secondColor = Color(0xff8F67E8);
   static const Color yellowColor = Color(0xffFE9C5E);
   static const Color redColor = Color(0xFFF92457);
+  static const Color redAccentColor = Color(0xFFFF5252);
   static const Color pinkLight = Color(0xFFFFA0B7);
   static const Color lightGray = Color(0xFFF4F4F4);
 
