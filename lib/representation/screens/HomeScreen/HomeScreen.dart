@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../core/constants/color_containts.dart';
 import '../../../core/constants/demision_containts.dart';
+import '../../widgets/ItemImage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   double _progress = 0.0;
   // ignore: prefer_final_fields, unused_field
   Duration _elapsedTime = Duration.zero;
+  bool isPlay = true;
 
   @override
   void dispose() {
@@ -32,9 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void handelSubmit() {}
 
+  void toggleMusic() {
+    setState(() {
+      isPlay = !isPlay;
+    });
+  }
+
   void _onSliderChanged(double value) {
     setState(() {
-      _progress = value;
+      _progress = value.truncateToDouble();
     });
   }
 
@@ -102,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() {
                         _pageController.animateToPage(
                           index,
-                          duration: const Duration(milliseconds: 100),
+                          duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       });
@@ -139,33 +147,41 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Container(
               margin: const EdgeInsets.only(left: 40, right: 40),
-              color: Colors.white,
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                       child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Image.asset("assets/images/ic_arrow_left.png"),
+                    child:
+                        ItemImage(urlImage: "assets/images/ic_arrow_left.png"),
                   )),
-                  Container(
-                    decoration: const BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromRGBO(133, 0, 32, 0.14),
-                            offset: Offset(2, 4),
-                            blurRadius: 23,
-                          )
-                        ],
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white),
-                    width: 80,
-                    height: 80,
-                    child: Image.asset("assets/images/ic_pause.png"),
+                  GestureDetector(
+                    onTap: toggleMusic,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color.fromRGBO(133, 0, 32, 0.14),
+                              offset: Offset(2, 4),
+                              blurRadius: 23,
+                            )
+                          ],
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white),
+                      width: 80,
+                      height: 80,
+                      child: isPlay
+                          ? const ItemImage(
+                              urlImage: "assets/images/ic_pause.png")
+                          : const ItemImage(
+                              urlImage: "assets/images/ic_play.png"),
+                    ),
                   ),
-                  Expanded(
+                  const Expanded(
                       child: Align(
                     alignment: Alignment.centerRight,
-                    child: Image.asset("assets/images/ic_right.png"),
+                    child:
+                        ItemImage(urlImage: "assets/images/ic_arrow_right.png"),
                   ))
                 ],
               ),
@@ -173,22 +189,24 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               children: [
                 Container(
-                  margin: EdgeInsets.only(left: kBiggerPadding,right: kBiggerPadding),
+                  margin: const EdgeInsets.only(
+                      left: kBiggerPadding, right: kBiggerPadding),
                   child: Row(
-                  children: [
-                    Expanded(
-                        child: Align(
-                      // ignore: sort_child_properties_last
-                      child: Text(_progress.toString()),
-                      alignment: Alignment.centerLeft,
-                    )),
-                    Expanded(
-                        child: Align(
-                      child: Text((100-_progress).toString()),
-                      alignment: Alignment.centerRight,
-                    ))
-                  ],
-                ),),
+                    children: [
+                      Expanded(
+                          child: Align(
+                        // ignore: sort_child_properties_last
+                        child: Text(_progress.toString()),
+                        alignment: Alignment.centerLeft,
+                      )),
+                      Expanded(
+                          child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text((100 - _progress).toString()),
+                      ))
+                    ],
+                  ),
+                ),
                 Slider(
                   activeColor: ColorPalette.redColor,
                   inactiveColor: ColorPalette.lightGray,
