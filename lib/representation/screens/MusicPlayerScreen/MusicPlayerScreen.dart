@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:http/http.dart' as http;
 import "package:just_audio/just_audio.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import "package:my_app/core/constants/size_containts.dart";
@@ -11,7 +12,6 @@ class MusicPlayerScreen extends StatefulWidget {
   static String routeName = '/music_player_screen';
 
   const MusicPlayerScreen({super.key});
-
   @override
   _MusicPlayerScreenState createState() => _MusicPlayerScreenState();
 }
@@ -23,6 +23,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
   Duration? currentPosition;
   bool isPlay = false;
   bool _isChangeValue = true;
+  bool iscompleted = false;
   double _progress = 0.0;
   double maxSliderValue = 0.0;
   String audioPath = "assets/music/CoChiDauMaBuon-PhatHuyT4.mp3";
@@ -32,6 +33,19 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
     String minutes = (duration.inMinutes % 60).toString().padLeft(2, '0');
     String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Lấy dữ liệu từ route
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args != null) {
+      setState(() {
+        audioPath = args as String;
+      });
+    }
   }
 
   @override
@@ -55,7 +69,17 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
     await player.setAudioSource(AudioSource.asset(audioPath));
     setState(() {
       audioDuration = player.duration;
-      maxSliderValue = double.parse(audioDuration!.inSeconds.toString());
+      maxSliderValue = double.parse(audioDuration!.inSeconds.toString()).ceilToDouble();
+    });
+
+    player.playerStateStream.listen((playerState) {
+      if (playerState.processingState == ProcessingState.completed && !iscompleted) {
+        // Bài hát đã kết thúc
+        iscompleted = true;
+        isPlay = false;
+        player.pause();
+        return;
+      }
     });
 
     player.positionStream.listen((position) {
@@ -89,6 +113,12 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
   }
 
   void toggleMusic() async {
+    if (iscompleted) {
+      isPlay = true;
+      iscompleted = false;
+      await player.seek(Duration.zero);
+      await player.play();
+    }
     setState(() {
       isPlay = !isPlay;
     });
@@ -106,7 +136,8 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
     String audioDurationString =
         audioDuration != null ? _formatDuration(audioDuration!) : '--:--';
     return Scaffold(
-      body: Container(
+      body: GestureDetector(
+        onVerticalDragUpdate: (details) => {print("helloo")},
         child: Column(
           children: [
             Container(
@@ -134,11 +165,16 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                                 size: kItemPadding,
                                 color: ColorPalette.lightGray,
                               )),
-                          const Text(
-                            "Back",
-                            style: TextStyle(
-                              fontSize: FontSize.klarge,
-                              color: ColorPalette.lightGray,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text(
+                              "Back",
+                              style: TextStyle(
+                                fontSize: FontSize.klarge,
+                                color: ColorPalette.lightGray,
+                              ),
                             ),
                           ),
                         ],
@@ -167,7 +203,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                   ],
                 )),
             Container(
-              margin: EdgeInsets.only(top: 80,bottom: 80),
+              margin: const EdgeInsets.only(top: 80, bottom: 80),
               width: 260,
               height: 260,
               decoration: const BoxDecoration(

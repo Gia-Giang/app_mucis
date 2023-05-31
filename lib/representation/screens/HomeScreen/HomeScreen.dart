@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:my_app/data/fake_data.dart';
+import 'package:my_app/representation/screens/HomeScreen/pages/All_Music.dart';
 
 import '../../../core/constants/color_containts.dart';
 import '../../../core/constants/demision_containts.dart';
-import '../../widgets/ItemImage.dart';
+// import '../../widgets/ItemImage.dart';
 import '../MusicPlayerScreen/MusicPlayerScreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,8 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Column(
+    return Scaffold(
+        body: SafeArea(
+            child: Column(
       children: [
         Container(
           height: 35,
@@ -131,7 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           },
           children: [
-            const MusicPlayerScreen(),
+            Container(
+              margin: const EdgeInsets.only(
+                  left: kMediumPadding, right: kMediumPadding),
+              child: const AllMusic(dataMusic: [...dataMusic]),
+            ),
             Container(
               color: Colors.blue,
               child: const Center(
@@ -146,7 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Container(
               color: Colors.blue,
-              
               child: const Center(
                 child: Text('Page 5'),
               ),
@@ -154,6 +160,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ))
       ],
-    ));
+    )));
   }
 }

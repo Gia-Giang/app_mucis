@@ -6,6 +6,7 @@ class ColorPalette {
   static const Color yellowColor = Color(0xffFE9C5E);
   static const Color redColor = Color(0xFFF92457);
   static const Color redAccentColor = Color(0xFFFF5252);
+  static const Color redAccentColor100 = Color.fromARGB(103, 255, 82, 82);
   static const Color pinkLight = Color(0xFFFFA0B7);
   static const Color lightGray = Color(0xFFF4F4F4);
 
