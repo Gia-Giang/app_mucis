@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: routes,
-      initialRoute: '/SpeechSampleApp_screen',
+      initialRoute: '/music_player_screen',
       home: Scaffold(
         bottomNavigationBar: SalomonBottomBar(
           currentIndex: _currentIndex,
