@@ -2,12 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_app/data/fake_data.dart';
+import 'package:my_app/representation/screens/HomeScreen/pages/Album_Music.dart';
 import 'package:my_app/representation/screens/HomeScreen/pages/All_Music.dart';
 
 import '../../../core/constants/color_containts.dart';
 import '../../../core/constants/demision_containts.dart';
 // import '../../widgets/ItemImage.dart';
-import '../MusicPlayerScreen/MusicPlayerScreen.dart';
+// import '../MusicPlayerScreen/MusicPlayerScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -141,9 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Container(
               color: Colors.blue,
-              child: const Center(
-                child: Text('Page 3'),
-              ),
+              child: const Album_Music(),
             ),
             Container(
               color: Colors.blue,

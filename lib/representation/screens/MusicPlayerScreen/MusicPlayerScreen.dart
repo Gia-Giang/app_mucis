@@ -10,14 +10,16 @@ import "../../widgets/ItemImage.dart";
 
 class MusicPlayerScreen extends StatefulWidget {
   static String routeName = '/music_player_screen';
+  final String url;
 
-  const MusicPlayerScreen({super.key});
+  const MusicPlayerScreen({required this.url});
   @override
-  _MusicPlayerScreenState createState() => _MusicPlayerScreenState();
+  MusicPlayerScreenState createState() => MusicPlayerScreenState(url: url);
 }
 
-class _MusicPlayerScreenState extends State<MusicPlayerScreen>
+class MusicPlayerScreenState extends State<MusicPlayerScreen>
     with SingleTickerProviderStateMixin {
+  final String url;
   late AnimationController _animationController;
   Duration? audioDuration;
   Duration? currentPosition;
@@ -29,6 +31,7 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
   String audioPath = "assets/music/CoChiDauMaBuon-PhatHuyT4.mp3";
   final player = AudioPlayer();
 
+  MusicPlayerScreenState({required this.url});
   String _formatDuration(Duration duration) {
     String minutes = (duration.inMinutes % 60).toString().padLeft(2, '0');
     String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
@@ -39,11 +42,9 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Lấy dữ liệu từ route
-    final args = ModalRoute.of(context)?.settings.arguments;
-    if (args != null) {
+    if (url != null) {
       setState(() {
-        audioPath = args as String;
+        audioPath = url;
       });
     }
   }
@@ -69,11 +70,13 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
     await player.setAudioSource(AudioSource.asset(audioPath));
     setState(() {
       audioDuration = player.duration;
-      maxSliderValue = double.parse(audioDuration!.inSeconds.toString()).ceilToDouble();
+      maxSliderValue =
+          double.parse(audioDuration!.inSeconds.toString()).ceilToDouble();
     });
 
     player.playerStateStream.listen((playerState) {
-      if (playerState.processingState == ProcessingState.completed && !iscompleted) {
+      if (playerState.processingState == ProcessingState.completed &&
+          !iscompleted) {
         // Bài hát đã kết thúc
         iscompleted = true;
         isPlay = false;
@@ -136,26 +139,28 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
     String audioDurationString =
         audioDuration != null ? _formatDuration(audioDuration!) : '--:--';
     return Scaffold(
-      body: GestureDetector(
-        onVerticalDragUpdate: (details) => {print("helloo")},
-        child: Column(
-          children: [
-            Container(
-                decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          offset: Offset(0, 4),
-                          blurRadius: 17,
-                          color: Color.fromRGBO(193, 6, 51, 0.12))
-                    ],
-                    color: ColorPalette.pinkLight,
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(kLargePadding))),
-                height: 200,
-                child: Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: kLargePadding),
+      body: Column(
+        children: [
+          Container(
+              decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        offset: Offset(0, 4),
+                        blurRadius: 17,
+                        color: Color.fromRGBO(193, 6, 51, 0.12))
+                  ],
+                  color: ColorPalette.pinkLight,
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(kLargePadding))),
+              height: 200,
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: kLargePadding),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                       child: Row(
                         children: [
                           IconButton(
@@ -165,159 +170,153 @@ class _MusicPlayerScreenState extends State<MusicPlayerScreen>
                                 size: kItemPadding,
                                 color: ColorPalette.lightGray,
                               )),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text(
-                              "Back",
-                              style: TextStyle(
-                                fontSize: FontSize.klarge,
-                                color: ColorPalette.lightGray,
-                              ),
+                          const Text(
+                            "Back",
+                            style: TextStyle(
+                              fontSize: FontSize.klarge,
+                              color: ColorPalette.lightGray,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Expanded(
-                        child: Container(
-                      margin: const EdgeInsets.only(left: kmega),
-                      child: const Row(children: [
-                        Text(
-                          "Now",
-                          style: TextStyle(
-                              color: ColorPalette.lightGray,
-                              fontWeight: FontWeight.bold,
-                              fontSize: FontSize.khuge),
-                        ),
-                        Text(
-                          " Playing",
-                          style: TextStyle(
-                            fontSize: FontSize.khuge,
+                  ),
+                  Expanded(
+                      child: Container(
+                    margin: const EdgeInsets.only(left: kmega),
+                    child: const Row(children: [
+                      Text(
+                        "Now",
+                        style: TextStyle(
                             color: ColorPalette.lightGray,
-                          ),
-                        )
-                      ]),
+                            fontWeight: FontWeight.bold,
+                            fontSize: FontSize.khuge),
+                      ),
+                      Text(
+                        " Playing",
+                        style: TextStyle(
+                          fontSize: FontSize.khuge,
+                          color: ColorPalette.lightGray,
+                        ),
+                      )
+                    ]),
+                  )),
+                ],
+              )),
+          Container(
+            margin: const EdgeInsets.only(top: 80, bottom: 80),
+            width: 260,
+            height: 260,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(200)),
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromRGBO(255, 255, 255, 0.4),
+                    Color.fromRGBO(255, 255, 255, 0.1),
+                  ],
+                  stops: [0.1073, 0.9118],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  transform: GradientRotation(142.15),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(189, 0, 45, 0.19),
+                    blurRadius: 53,
+                    spreadRadius: 12,
+                    offset: Offset(1, 23),
+                  )
+                ]),
+            child: Center(
+              child: RotationTransition(
+                turns: _animationController,
+                child: Image.asset(
+                  "assets/images/avatar_play.png",
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              Container(
+                height: 15,
+                margin: const EdgeInsets.only(
+                    left: kBiggerPadding, right: kBiggerPadding),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text((currentPositionString).toString()),
+                    )),
+                    Expanded(
+                        child: Align(
+                      // ignore: sort_child_properties_last
+                      child: Text(audioDurationString.toString()),
+                      alignment: Alignment.centerRight,
                     )),
                   ],
-                )),
-            Container(
-              margin: const EdgeInsets.only(top: 80, bottom: 80),
-              width: 260,
-              height: 260,
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(200)),
-                  gradient: LinearGradient(
-                    colors: [
-                      Color.fromRGBO(255, 255, 255, 0.4),
-                      Color.fromRGBO(255, 255, 255, 0.1),
-                    ],
-                    stops: [0.1073, 0.9118],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    transform: GradientRotation(142.15),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromRGBO(189, 0, 45, 0.19),
-                      blurRadius: 53,
-                      spreadRadius: 12,
-                      offset: Offset(1, 23),
-                    )
-                  ]),
-              child: Center(
-                child: RotationTransition(
-                  turns: _animationController,
-                  child: Image.asset(
-                    "assets/images/avatar_play.png",
-                    fit: BoxFit.fill,
-                  ),
                 ),
               ),
-            ),
-            Column(
+              Container(
+                margin: const EdgeInsets.only(
+                    left: kDefaultRadius, right: kDefaultRadius),
+                child: Slider(
+                  thumbColor: ColorPalette.redAccentColor,
+                  activeColor: ColorPalette.redColor,
+                  inactiveColor: ColorPalette.lightGray,
+                  value: _progress,
+                  min: 0.0,
+                  max: maxSliderValue,
+                  onChanged: _onSliderChanged,
+                  onChangeEnd: _onSliderChangeEnd,
+                ),
+              )
+            ],
+          ),
+          Container(
+            margin: const EdgeInsets.only(
+                left: kBiggerPadding, right: kBiggerPadding),
+            child: Row(
               children: [
-                Container(
-                  height: 15,
-                  margin: const EdgeInsets.only(
-                      left: kBiggerPadding, right: kBiggerPadding),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text((currentPositionString).toString()),
-                      )),
-                      Expanded(
-                          child: Align(
-                        // ignore: sort_child_properties_last
-                        child: Text(audioDurationString.toString()),
-                        alignment: Alignment.centerRight,
-                      )),
-                    ],
+                const Expanded(
+                    child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: ItemImage(urlImage: "assets/images/ic_arrow_left.png"),
+                )),
+                GestureDetector(
+                  onTap: toggleMusic,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromRGBO(133, 0, 32, 0.14),
+                            offset: Offset(2, 4),
+                            blurRadius: 23,
+                          )
+                        ],
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.white),
+                    width: 80,
+                    height: 80,
+                    child: isPlay
+                        ? const ItemImage(
+                            urlImage: "assets/images/ic_pause.png")
+                        : const ItemImage(
+                            urlImage: "assets/images/ic_play.png"),
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(
-                      left: kDefaultRadius, right: kDefaultRadius),
-                  child: Slider(
-                    thumbColor: ColorPalette.redAccentColor,
-                    activeColor: ColorPalette.redColor,
-                    inactiveColor: ColorPalette.lightGray,
-                    value: _progress,
-                    min: 0.0,
-                    max: maxSliderValue,
-                    onChanged: _onSliderChanged,
-                    onChangeEnd: _onSliderChangeEnd,
-                  ),
-                )
+                const Expanded(
+                    child: Align(
+                  alignment: Alignment.centerRight,
+                  child:
+                      ItemImage(urlImage: "assets/images/ic_arrow_right.png"),
+                ))
               ],
             ),
-            Container(
-              margin: const EdgeInsets.only(
-                  left: kBiggerPadding, right: kBiggerPadding),
-              child: Row(
-                children: [
-                  const Expanded(
-                      child: Align(
-                    alignment: Alignment.centerLeft,
-                    child:
-                        ItemImage(urlImage: "assets/images/ic_arrow_left.png"),
-                  )),
-                  GestureDetector(
-                    onTap: toggleMusic,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(133, 0, 32, 0.14),
-                              offset: Offset(2, 4),
-                              blurRadius: 23,
-                            )
-                          ],
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                          color: Colors.white),
-                      width: 80,
-                      height: 80,
-                      child: isPlay
-                          ? const ItemImage(
-                              urlImage: "assets/images/ic_pause.png")
-                          : const ItemImage(
-                              urlImage: "assets/images/ic_play.png"),
-                    ),
-                  ),
-                  const Expanded(
-                      child: Align(
-                    alignment: Alignment.centerRight,
-                    child:
-                        ItemImage(urlImage: "assets/images/ic_arrow_right.png"),
-                  ))
-                ],
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

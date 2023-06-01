@@ -7,7 +7,6 @@ import "package:my_app/router.dart";
 
 import "core/constants/color_containts.dart";
 import "core/constants/demision_containts.dart";
-import "core/helpers/asset_hepler.dart";
 
 void main() {
   runApp(const MyApp());
@@ -23,60 +22,63 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: routes,
-      initialRoute: '/home_screen',
-      home: Scaffold(
-        bottomNavigationBar: SalomonBottomBar(
-          currentIndex: _currentIndex,
-          onTap: (i) => setState(
-            () => _currentIndex = i,
+      initialRoute: '/ConvertSoundToText',
+      home: Stack(children: [
+        Scaffold(
+          bottomNavigationBar: SalomonBottomBar(
+            currentIndex: _currentIndex,
+            onTap: (i) => setState(
+              () => _currentIndex = i,
+            ),
+            selectedItemColor: ColorPalette.redColor,
+            unselectedItemColor: ColorPalette.redColor.withOpacity(0.2),
+            items: [
+              SalomonBottomBarItem(
+                icon: const Icon(
+                  FontAwesomeIcons.house,
+                  size: kDefaultPadding,
+                ),
+                title: const Text("Home"),
+              ),
+              SalomonBottomBarItem(
+                icon: const Icon(
+                  FontAwesomeIcons.solidHeart,
+                  size: kDefaultPadding,
+                ),
+                title: const Text("Likes"),
+              ),
+              SalomonBottomBarItem(
+                icon: const Icon(
+                  FontAwesomeIcons.briefcase,
+                  size: kDefaultPadding,
+                ),
+                title: const Text("Booking"),
+              ),
+              SalomonBottomBarItem(
+                icon: const Icon(
+                  FontAwesomeIcons.solidUser,
+                  size: kDefaultPadding,
+                ),
+                title: const Text("User"),
+              ),
+            ],
           ),
-          selectedItemColor: ColorPalette.redColor,
-          unselectedItemColor: ColorPalette.redColor.withOpacity(0.2),
-          items: [
-            SalomonBottomBarItem(
-              icon: const Icon(
-                FontAwesomeIcons.house,
-                size: kDefaultPadding,
-              ),
-              title: Text("Home"),
-            ),
-            SalomonBottomBarItem(
-              icon: const Icon(
-                FontAwesomeIcons.solidHeart,
-                size: kDefaultPadding,
-              ),
-              title: Text("Likes"),
-            ),
-            SalomonBottomBarItem(
-              icon: const Icon(
-                FontAwesomeIcons.briefcase,
-                size: kDefaultPadding,
-              ),
-              title: const Text("Booking"),
-            ),
-            SalomonBottomBarItem(
-              icon: const Icon(
-                FontAwesomeIcons.solidUser,
-                size: kDefaultPadding,
-              ),
-              title: Text("User"),
-            ),
-          ],
+          body: IndexedStack(
+            index: _currentIndex,
+            children: [
+              const HomeScreen(),
+              Container(),
+              Container(),
+              Container(),
+            ],
+          ),
         ),
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            const HomeScreen(),
-            Container(),
-            Container(),
-            Container(),
-          ],
-        ),
-      ),
+      ]),
     );
   }
 }
